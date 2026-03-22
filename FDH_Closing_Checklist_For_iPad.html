@@ -1,0 +1,1340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>FDH Supervisor Closing Checklist</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f1117;
+    --surface: #1a1d27;
+    --surface2: #22262f;
+    --border: #2a2e3a;
+    --text: #e8e9ed;
+    --text-dim: #8b8fa3;
+    --accent: #4ade80;
+    --accent-dim: rgba(74, 222, 128, 0.12);
+    --accent-glow: rgba(74, 222, 128, 0.25);
+    --orange: #fb923c;
+    --orange-dim: rgba(251, 146, 60, 0.12);
+    --red: #f87171;
+    --section-radius: 14px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    min-height: -webkit-fill-available;
+    overflow-x: hidden;
+  }
+
+  /* Top header bar */
+  .top-bar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(15, 17, 23, 0.85);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    padding: 14px 20px;
+  }
+
+  .top-bar-inner {
+    max-width: 860px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .top-bar h1 {
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+    color: var(--text);
+  }
+
+  .top-bar h1 span {
+    color: var(--accent);
+  }
+
+  .progress-pill {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--accent);
+    background: var(--accent-dim);
+    border: 1px solid rgba(74, 222, 128, 0.2);
+    padding: 5px 12px;
+    border-radius: 20px;
+    transition: all 0.3s;
+  }
+
+  .progress-bar-track {
+    max-width: 860px;
+    margin: 0 auto;
+    height: 3px;
+    background: var(--surface2);
+    margin-top: 8px;
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), #34d399);
+    border-radius: 2px;
+    transition: width 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+    width: 0%;
+  }
+
+  /* Main content area */
+  .container {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 16px 16px 120px;
+  }
+
+  /* Meta fields: date & supervisor */
+  .meta-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--section-radius);
+    padding: 18px 20px;
+    margin-bottom: 16px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+
+  .meta-card label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--text-dim);
+    display: block;
+    margin-bottom: 6px;
+  }
+
+  .meta-card input {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .meta-card input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-dim);
+  }
+
+  /* Station nav (horizontal scroll) */
+  .station-nav {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding: 10px 16px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    position: sticky;
+    top: 62px;
+    z-index: 99;
+    background: rgba(15, 17, 23, 0.9);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    margin: 0 -16px;
+  }
+  .station-nav::-webkit-scrollbar { display: none; }
+
+  .station-tab {
+    flex-shrink: 0;
+    padding: 8px 14px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-dim);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+    position: relative;
+  }
+
+  .station-tab.active {
+    color: var(--bg);
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+
+  .station-tab .tab-dot {
+    display: inline-block;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    margin-left: 6px;
+    vertical-align: middle;
+    transition: background 0.3s;
+    background: transparent;
+  }
+
+  .station-tab.partial .tab-dot { background: var(--orange); }
+  .station-tab.complete .tab-dot { background: var(--accent); }
+  .station-tab.active .tab-dot { background: var(--bg); }
+  .station-tab.active.partial .tab-dot { background: var(--bg); }
+
+  /* Section cards */
+  .section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--section-radius);
+    margin-bottom: 14px;
+    overflow: hidden;
+    animation: fadeUp 0.3s ease-out;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .section-header {
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  .master-checkbox {
+    flex-shrink: 0;
+    width: 28px;
+    height: 28px;
+    border-radius: 7px;
+    border: 2px solid var(--border);
+    background: var(--surface2);
+    position: relative;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .master-checkbox:active { transform: scale(0.9); }
+
+  .master-checkbox.checked {
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+
+  .master-checkbox.partial {
+    border-color: var(--orange);
+    background: var(--orange-dim);
+  }
+
+  .master-checkbox svg {
+    width: 15px;
+    height: 15px;
+    stroke: var(--bg);
+    stroke-width: 3;
+    fill: none;
+    opacity: 0;
+    transition: opacity 0.15s;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .master-checkbox.checked svg.check-icon { opacity: 1; }
+  .master-checkbox.partial svg.dash-icon { opacity: 1; stroke: var(--orange); }
+
+  .section-header h2 {
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: -0.2px;
+    flex: 1;
+  }
+
+  .section-count {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    font-weight: 500;
+    padding: 3px 10px;
+    border-radius: 12px;
+    color: var(--text-dim);
+    background: var(--surface2);
+    transition: all 0.3s;
+    flex-shrink: 0;
+  }
+
+  .section-count.done {
+    color: var(--accent);
+    background: var(--accent-dim);
+  }
+
+  .section-body {
+    padding: 0 20px 16px;
+  }
+
+  /* Checklist items */
+  .check-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 11px 0;
+    border-bottom: 1px solid rgba(42, 46, 58, 0.5);
+    transition: opacity 0.25s;
+  }
+
+  .check-item:last-of-type { border-bottom: none; }
+
+  .check-item.checked { opacity: 0.5; }
+
+  .checkbox {
+    flex-shrink: 0;
+    width: 26px;
+    height: 26px;
+    border-radius: 7px;
+    border: 2px solid var(--border);
+    background: var(--surface2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 1px;
+  }
+
+  .checkbox:active {
+    transform: scale(0.9);
+  }
+
+  .checkbox.checked {
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+
+  .checkbox svg {
+    width: 14px;
+    height: 14px;
+    stroke: var(--bg);
+    stroke-width: 3;
+    fill: none;
+    opacity: 0;
+    transition: opacity 0.15s;
+  }
+
+  .checkbox.checked svg { opacity: 1; }
+
+  .check-label {
+    font-size: 14.5px;
+    line-height: 1.45;
+    color: var(--text);
+    cursor: pointer;
+    flex: 1;
+  }
+
+  .check-item.checked .check-label {
+    text-decoration: line-through;
+    text-decoration-color: var(--text-dim);
+  }
+
+  /* Notes textarea */
+  .notes-area {
+    margin-top: 10px;
+  }
+
+  .notes-area label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--text-dim);
+    display: block;
+    margin-bottom: 6px;
+  }
+
+  .notes-area textarea {
+    width: 100%;
+    min-height: 60px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    color: var(--text);
+    outline: none;
+    resize: vertical;
+    transition: border-color 0.2s;
+  }
+
+  .notes-area textarea:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-dim);
+  }
+
+  /* Bottom action bar */
+  .bottom-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    background: rgba(15, 17, 23, 0.9);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-top: 1px solid var(--border);
+    padding: 14px 20px;
+    padding-bottom: max(14px, env(safe-area-inset-bottom));
+  }
+
+  .bottom-bar-inner {
+    max-width: 860px;
+    margin: 0 auto;
+    display: flex;
+    gap: 10px;
+  }
+
+  .btn {
+    flex: 1;
+    padding: 13px 16px;
+    border-radius: 10px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+
+  .btn:active { transform: scale(0.97); }
+
+  .btn-primary {
+    background: var(--accent);
+    color: var(--bg);
+  }
+
+  .btn-secondary {
+    background: var(--surface2);
+    color: var(--text);
+    border: 1px solid var(--border);
+  }
+
+  .btn-danger {
+    background: rgba(248, 113, 113, 0.12);
+    color: var(--red);
+    border: 1px solid rgba(248, 113, 113, 0.2);
+  }
+
+  /* Toast notification */
+  .toast {
+    position: fixed;
+    top: 80px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-20px);
+    background: var(--surface);
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    padding: 10px 20px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    opacity: 0;
+    transition: all 0.3s;
+    z-index: 200;
+    pointer-events: none;
+  }
+
+  .toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  /* Print styles */
+  @media print {
+    .top-bar, .bottom-bar, .station-nav { display: none !important; }
+    body { background: #fff; color: #111; }
+    .container { padding: 0; max-width: 100%; }
+    .section { break-inside: avoid; border: 1px solid #ccc; margin-bottom: 10px; background: #fff; }
+    .section-header h2 { color: #111; }
+    .check-item { padding: 6px 0; }
+    .checkbox { border-color: #999; background: #fff; }
+    .checkbox.checked { background: #4ade80; border-color: #4ade80; }
+    .check-label { color: #222; }
+    .meta-card { background: #fff; border: 1px solid #ccc; }
+    .meta-card input { border: 1px solid #ccc; background: #f9f9f9; color: #111; }
+    .notes-area textarea { border: 1px solid #ccc; background: #f9f9f9; color: #111; }
+  }
+</style>
+</head>
+<body>
+
+<div class="toast" id="toast"></div>
+
+<div class="top-bar">
+  <div class="top-bar-inner">
+    <h1><span>FDH</span> Closing Checklist</h1>
+    <div class="progress-pill" id="progressPill">0 / 0</div>
+  </div>
+  <div class="progress-bar-track">
+    <div class="progress-bar-fill" id="progressFill"></div>
+  </div>
+</div>
+
+<div class="container" id="app"></div>
+
+<div class="bottom-bar">
+  <div class="bottom-bar-inner">
+    <button class="btn btn-secondary" onclick="resetAll()">Reset</button>
+    <button class="btn btn-secondary" onclick="exportPDF()">Export PDF</button>
+    <button class="btn btn-primary" onclick="saveState()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+      Save
+    </button>
+  </div>
+</div>
+
+<script>
+// ── Data: All stations and their checklist items ──
+const STATIONS = [
+  {
+    name: "Closing Micros",
+    items: [
+      "Secure the Front Door Entrance Area after daily business.",
+      "Ensure the station attendant is present for checkout.",
+      "Complete all necessary paperwork related to the cash register closing, including sales reports, sign-in sheets, or any required documentation for billing purposes.",
+      "Wipe down the cash register, countertops, and other frequently touched surfaces.",
+      "Clean and disinfect keypads, card readers, and display screens."
+    ]
+  },
+  {
+    name: "Cashier & Restrooms",
+    items: [
+      "Organize menu cards, paperwork, and supplies, ensuring everything is neatly stored.",
+      "Discard unnecessary or used-up supplies, such as pens, old receipt rolls, etc.",
+      "Restock to-go items: utensils, cups & lids, and to-go containers, ensuring station is fully prepared for next shift. Return to-go container is cleaned.",
+      "Restock all paper goods, hand towels, and tissue paper in the public restrooms and employee restrooms."
+    ]
+  },
+  {
+    name: "Homestyle",
+    items: [
+      "Ensure the station attendant is present for checkout.",
+      "Turn off all hot wells and hot boxes.",
+      "Clean hot wells, ensuring they are free of food debris and wiped dry.",
+      "Clean glass sneeze guards, ensuring they are streak-free.",
+      "Sanitize countertops, the front of the station, and surrounding walls.",
+      "Verify the hot box is empty, and clean the exterior door and handle.",
+      "Check under-counter storage and ensure the area is organized and clean.",
+      "Ensure the under-counter trash can is emptied and cleaned.",
+      "Check all station equipment, ensuring everything is operational for the next day.",
+      "Note any out-of-order equipment or products that need attention."
+    ]
+  },
+  {
+    name: "Grill Station",
+    items: [
+      "Ensure the station attendant is present for checkout.",
+      "Turn off all grill equipment (grills, fryers, etc.).",
+      "Clean grills, fryers, and surrounding areas, ensuring all surfaces are free of food debris and grease.",
+      "Clean glass sneeze guards without streaks, and sanitize countertops and surrounding walls.",
+      "Empty and clean hot wells, ensuring they are free of food debris and wiped dry.",
+      "Check the freezer for a thermometer and ensure it is reading the proper temperature.",
+      "Restock the freezer, verifying all products are labeled, dated, and stored properly (FIFO)."
+    ]
+  },
+  {
+    name: "Cake Pop & Cereal",
+    items: [
+      "Turn off the cake pop machine.",
+      "Wipe down the machine's exterior, ensuring all surfaces are clean and sanitized, no batter or residue left behind.",
+      "Check the machine for any malfunctions or issues and report them if necessary.",
+      "Ensure all tools and utensils used with the cake pop machine are cleaned and stored properly.",
+      "Restock syrup, soufflé cups, and cereal.",
+      "Clean cereal dispensers, wiping down the exterior and under dispensers ensuring they are free of crumbs and debris.",
+      "Ensure the surrounding area (countertops and walls) is cleaned and sanitized.",
+      "Note any out-of-order equipment or products that require attention."
+    ]
+  },
+  {
+    name: "Sauté Station",
+    items: [
+      "Ensure the sauté station attendant is present for checkout.",
+      "Turn off all cooking units (grills, burners, fryers, etc.).",
+      "Clean all cooking surfaces thoroughly, ensuring no food debris or grease remains.",
+      "Clean hot and cold wells, ensuring they are free of food debris and wiped dry.",
+      "Clean glass sneeze guards, ensuring they are streak-free.",
+      "Sanitize countertops, the front of the station, and surrounding walls.",
+      "Clean the reach-in refrigerators, ensuring they are free of spills or food debris.",
+      "Check the refrigerator thermometer to confirm proper temperature.",
+      "Ensure all products are labeled, dated, and stored properly (FIFO).",
+      "Ensure under-counter storage is organized and free of clutter.",
+      "Empty and clean trash cans.",
+      "Inspect the station and note any out-of-order equipment or products that need attention or repair."
+    ]
+  },
+  {
+    name: "Toast & Deli",
+    items: [
+      "Ensure the toast station attendant is present for checkout.",
+      "Turn off the toaster and any other equipment at the station.",
+      "Clean the toaster, removing all crumbs and wiping down the exterior surfaces.",
+      "Pull all remaining bread from the bread box and store it properly.",
+      "Check for any expired bread or products and discard as needed.",
+      "Wipe down the bread box, ensuring it is clean and free of crumbs.",
+      "Clean and sanitize the countertops, surrounding walls, and other surfaces in the station.",
+      "Clean and organize under-counter storage, ensuring it is clutter-free."
+    ]
+  },
+  {
+    name: "Display Station",
+    items: [
+      "Ensure the station attendant is present for checkout.",
+      "Turn off all hot wells, hot boxes, and cold wells.",
+      "Clean all hot and cold wells, ensuring they are free of food debris and wiped dry.",
+      "Clean glass sneeze guards, ensuring they are streak-free.",
+      "Wipe down and sanitize countertops, the front of the station, and surrounding walls.",
+      "Verify that the hot box is empty, and clean the exterior door and handle.",
+      "Ensure the under-counter trash can is emptied and cleaned.",
+      "Clean and sanitize hand sinks, and restock soap, paper towels, and trash can liners.",
+      "Check all equipment to ensure it is properly turned off and cleaned.",
+      "Restock any necessary items for the next shift.",
+      "Note any out-of-order equipment or products that need attention or maintenance."
+    ]
+  },
+  {
+    name: "Mediterranean",
+    items: [
+      "Ensure the deli attendant is present for checkout.",
+      "Turn off all cold & hot wells and clean them thoroughly, ensuring they are wiped dry.",
+      "Clean the reach-in refrigerator, ensuring all shelves and surfaces are wiped clean.",
+      "Check the thermometer to ensure the refrigerator is at the correct temperature.",
+      "Ensure all products are properly labeled, dated, and stored according to FIFO standards.",
+      "Clean the glass sneeze guards, ensuring they are streak-free.",
+      "Polish the stainless steel counter and cooler door, leaving them free of smudges and fingerprints.",
+      "Ensure the trash can is emptied and cleaned.",
+      "Restock any necessary items for the next shift.",
+      "Check under-counter storage to ensure everything is organized and clean.",
+      "Note any out-of-order equipment or products that need attention or maintenance."
+    ]
+  },
+  {
+    name: "Simply Made",
+    items: [
+      "Ensure the line attendant is present for checkout.",
+      "Turn off all hot wells and clean them thoroughly, ensuring they are free of food debris and wiped dry.",
+      "Clean the glass sneeze guards, ensuring they are streak-free.",
+      "Sanitize countertops, the front of the station, and the surrounding area.",
+      "Check the gluten-free station countertop reach-in: ensure thermometer is in place and reads correctly.",
+      "Clean the interior of the reach-in thoroughly.",
+      "Restock the gluten-free area with appropriate items.",
+      "Clean the glass door, ensuring it is streak-free.",
+      "Sanitize the surrounding walls and clean under the equipment to remove any debris.",
+      "Ensure the under-counter trash can is emptied and cleaned, replacing the liner as necessary.",
+      "Restock any necessary items for the next shift.",
+      "Note any out-of-order equipment or products that require attention or repair."
+    ]
+  },
+  {
+    name: "Pasta Station",
+    items: [
+      "Ensure the pasta station attendant is present for checkout.",
+      "Turn off all hot wells and hot boxes.",
+      "Clean hot wells, ensuring they are free of food debris and wiped dry.",
+      "Clean the glass sneeze guards, ensuring they are streak-free.",
+      "Sanitize countertops, the front of the station, and surrounding walls.",
+      "Verify that the hot box is empty, and clean the exterior door and handle.",
+      "Check under-counter storage to ensure it is organized and clean.",
+      "Ensure the under-counter trash can is emptied and cleaned.",
+      "Note any out-of-order equipment or products that need maintenance or attention."
+    ]
+  },
+  {
+    name: "Pizza Station",
+    items: [
+      "Ensure the pizza station attendant is present for checkout.",
+      "Turn off all hot wells, hot boxes, and pizza oven.",
+      "Clean the hot wells, ensuring they are free of food debris and wiped dry.",
+      "Clean the glass sneeze guards, ensuring they are streak-free.",
+      "Wipe down and sanitize the countertops, pizza oven, and the counter underneath.",
+      "Clean the front of the station and surrounding walls, ensuring no spills or food debris are left behind.",
+      "Verify that the hot box is empty, and clean the exterior door and handle.",
+      "Check and clean the reach-in cooler, ensuring all products are properly organized, labeled, and dated.",
+      "Ensure the thermometer in the cooler is reading the correct temperature.",
+      "Ensure the under-counter trash can is emptied and cleaned.",
+      "Clean and sanitize all utensils and tools, and store them properly for the next shift.",
+      "Restock any necessary items.",
+      "Note any out-of-order equipment or products that need maintenance or attention."
+    ]
+  },
+  {
+    name: "Salad Bar",
+    items: [
+      "Ensure salad bar attendants are present for checkout.",
+      "Turn off the Salad Bar unit and clean thoroughly.",
+      "Sanitize all surfaces, ensuring no food debris is left behind.",
+      "Restock the salad bar with fresh ingredients for the next day.",
+      "Clean inside cold units and reach-in refrigerators.",
+      "Ensure thermometers are in place and reading proper temperatures.",
+      "Verify all products are organized, labeled, and dated following FIFO guidelines.",
+      "DUST & clean the glass sneeze guards, ensuring they are streak-free.",
+      "Polish the stainless steel counters and cooler doors, ensuring they are clean and smudge-free.",
+      "Clean and sanitize hand sinks. Restock soap, paper towels, and ensure there is a trash can by hand sink.",
+      "Check and clean under-counter storage, ensuring it is organized and free of debris.",
+      "Empty and clean trash cans, and replace the liners.",
+      "Note any out-of-order equipment or products that need maintenance or attention."
+    ]
+  },
+  {
+    name: "Dining & Dessert",
+    items: [
+      "Ensure Dining Room Attendants are present for checkout.",
+      "Restock and clean the Dining Room, Dessert Stations, and Condiment Stations.",
+      "Restock condiments, napkins, salt & pepper shakers, and ice cream.",
+      "Switch the ice cream machine to \"STAND-BY\" mode.",
+      "Restock the gluten-free reach-in cooler in the large dining area.",
+      "Clean and sanitize countertops and front of the station, ensuring glass sneeze guards are streak-free.",
+      "Clean the gluten-free reach-in cooler, including the thermometer, door, and handles.",
+      "Check all light fixtures, tables, and fire exits for any issues.",
+      "Note any out-of-order equipment, condiment pumps, or products.",
+      "DUST and clean walls and ceilings, especially around AC vents."
+    ]
+  },
+  {
+    name: "Dish Room 1 & 2",
+    items: [
+      "Ensure the PM Head Dishwasher is present for checkout.",
+      "Clean the dishwasher, Tray Carousel, and window area.",
+      "Clean, sort, and place all dishes in the correct caddies.",
+      "Sort silverware into cylinders and leave to-go containers to air dry.",
+      "Fully restock the front of the house with dishes, tumblers, and silverware.",
+      "Leave dish rooms dry and free of food debris; ensure trash cans are cleaned and lined with proper bags.",
+      "Clean hand sinks, restock soap, paper towels, and trash can by the hand sink.",
+      "Note any out-of-order equipment or products that need attention."
+    ]
+  },
+  {
+    name: "Storage Closets",
+    items: [
+      "Sweep and mop all areas, ensuring they are free of litter and food debris.",
+      "Store all items properly and off the floor.",
+      "Label, date, and rotate items according to FIFO guidelines."
+    ]
+  },
+  {
+    name: "Restrooms",
+    items: [
+      "Inspect all restrooms for cleanliness and maintenance deficiencies.",
+      "Restock hand soap, paper towels, toilet paper, and personal hygiene dispensers as needed.",
+      "ServiceMaster cleans restrooms Sun–Fri; Saturday night staff is responsible for cleaning and restocking."
+    ]
+  },
+  {
+    name: "Beverage 1 & 2",
+    items: [
+      "Ensure the Beverage Attendant is present for checkout.",
+      "Restock and clean soda machines, juice dispensers, milk dispensers, coffee makers, plant-based milk dispensers, Nestlé espresso machines, and tea dispensers.",
+      "Check products in machines, including CO2 tanks, BIB products, and coffee condiments.",
+      "Clean countertops, equipment, and doors.",
+      "Ensure trash cans are clean and have proper bags.",
+      "Remove and soak nozzles from soda, juice, and tea machines in sanitizer water.",
+      "Check the temperature log for the milk dispenser to ensure it's within proper range.",
+      "Rugs are to be cleaned and rolled up.",
+      "Note any out-of-order equipment or products that need maintenance.",
+      "Ensure all Bag-In-Box (BIB) products are organized by \"best used by\" dates (FIFO).",
+      "Sweep and mop tiled flooring beneath beverage dispensers. Confirm area is free of litter, spills, and debris.",
+      "Store CO2 tanks properly: full tanks on the left, empty on the right. Secure all tanks with chains."
+    ]
+  },
+  {
+    name: "Mop Room",
+    items: [
+      "Sweep and mop the area, ensuring it is free of debris.",
+      "Store all items in their proper areas and off the ground.",
+      "Hang mops and brooms in the designated space.",
+      "Clean mop buckets and tie linen bags, placing them in the dirty linen carts.",
+      "Replace clean bags in the stands for the next shift.",
+      "Clean out mop drain, ensuring the drain is free of all debris."
+    ]
+  },
+  {
+    name: "Compost & Dumpster",
+    items: [
+      "Ensure compost and dumpster doors are properly closed.",
+      "Clean the surrounding area, ensuring no debris or mess is left behind."
+    ]
+  },
+  {
+    name: "Drain Enzyme",
+    items: [
+      "Ensure all FLOOR DRAINS are treated with enzyme cleaner.",
+      "Pour 4 oz of Enzyme Treatment down each FLOOR DRAIN.",
+      "Beverage Stations 1 & 2 — treated.",
+      "Simply Made — treated.",
+      "Pasta/Pizza — treated.",
+      "HomeStyle / Display — treated.",
+      "Large and Small Dishrooms — treated."
+    ]
+  }
+];
+
+// ── State ──
+let state = { checked: {}, notes: {}, date: '', supervisor: '' };
+
+function stateKey() { return 'fdh_closing_v1'; }
+
+function loadState() {
+  try {
+    const s = localStorage.getItem(stateKey());
+    if (s) state = JSON.parse(s);
+  } catch(e) {}
+}
+
+function saveState() {
+  state.date = document.getElementById('metaDate')?.value || '';
+  state.supervisor = document.getElementById('metaSupervisor')?.value || '';
+  // gather notes
+  document.querySelectorAll('.notes-input').forEach(el => {
+    state.notes[el.dataset.station] = el.value;
+  });
+  try {
+    localStorage.setItem(stateKey(), JSON.stringify(state));
+    showToast('Saved successfully');
+  } catch(e) {
+    showToast('Save failed');
+  }
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2000);
+}
+
+function toggleCheck(stationIdx, itemIdx) {
+  const key = `${stationIdx}-${itemIdx}`;
+  state.checked[key] = !state.checked[key];
+  updateSectionDOM(stationIdx);
+  updateProgress();
+  updateTabs();
+}
+
+function toggleAll(stationIdx) {
+  const st = STATIONS[stationIdx];
+  const p = stationProgress(stationIdx);
+  const shouldCheck = p.done < p.total;
+  st.items.forEach((_, i) => {
+    state.checked[`${stationIdx}-${i}`] = shouldCheck;
+  });
+  updateSectionDOM(stationIdx);
+  updateProgress();
+  updateTabs();
+}
+
+function updateSectionDOM(si) {
+  const section = document.getElementById('station-' + si);
+  if (!section) return;
+  const p = stationProgress(si);
+
+  // Update master checkbox
+  const master = section.querySelector('.master-checkbox');
+  if (master) {
+    master.classList.toggle('checked', p.done === p.total);
+    master.classList.toggle('partial', p.done > 0 && p.done < p.total);
+  }
+
+  // Update count badge
+  const count = section.querySelector('.section-count');
+  if (count) {
+    count.textContent = `${p.done}/${p.total}`;
+    count.classList.toggle('done', p.done === p.total);
+  }
+
+  // Update individual items
+  const items = section.querySelectorAll('.check-item');
+  STATIONS[si].items.forEach((_, ii) => {
+    const key = `${si}-${ii}`;
+    const checked = !!state.checked[key];
+    const item = items[ii];
+    if (!item) return;
+    item.classList.toggle('checked', checked);
+    const cb = item.querySelector('.checkbox');
+    if (cb) cb.classList.toggle('checked', checked);
+  });
+}
+
+function totalChecked() {
+  return Object.values(state.checked).filter(Boolean).length;
+}
+
+function totalItems() {
+  return STATIONS.reduce((s, st) => s + st.items.length, 0);
+}
+
+function stationProgress(idx) {
+  const st = STATIONS[idx];
+  let done = 0;
+  st.items.forEach((_, i) => { if (state.checked[`${idx}-${i}`]) done++; });
+  return { done, total: st.items.length };
+}
+
+// ── Active station (for nav highlight + scroll) ──
+let activeStation = 0;
+
+function scrollToStation(idx) {
+  activeStation = idx;
+  const el = document.getElementById('station-' + idx);
+  if (el) {
+    const top = el.getBoundingClientRect().top + window.scrollY - 170;
+    window.scrollTo({ top, behavior: 'smooth' });
+  }
+  updateTabs();
+}
+
+function updateTabs() {
+  document.querySelectorAll('.station-tab').forEach((tab, i) => {
+    tab.classList.toggle('active', i === activeStation);
+    const p = stationProgress(i);
+    tab.classList.toggle('complete', p.done === p.total);
+    tab.classList.toggle('partial', p.done > 0 && p.done < p.total);
+  });
+}
+
+// ── Render ──
+function render() {
+  const app = document.getElementById('app');
+
+  // Meta card
+  let html = `
+    <div class="meta-card">
+      <div>
+        <label>Date</label>
+        <input type="date" id="metaDate" value="${state.date || new Date().toISOString().slice(0,10)}">
+      </div>
+      <div>
+        <label>Supervisor on Duty</label>
+        <input type="text" id="metaSupervisor" placeholder="Name" value="${state.supervisor || ''}">
+      </div>
+    </div>
+  `;
+
+  // Station nav
+  html += '<div class="station-nav" id="stationNav">';
+  STATIONS.forEach((st, i) => {
+    const p = stationProgress(i);
+    let cls = '';
+    if (p.done === p.total) cls = 'complete';
+    else if (p.done > 0) cls = 'partial';
+    if (i === activeStation) cls += ' active';
+    html += `<div class="station-tab ${cls}" onclick="scrollToStation(${i})">${st.name}<span class="tab-dot"></span></div>`;
+  });
+  html += '</div>';
+
+  // Sections
+  STATIONS.forEach((st, si) => {
+    const p = stationProgress(si);
+    let masterCls = '';
+    if (p.done === p.total) masterCls = 'checked';
+    else if (p.done > 0) masterCls = 'partial';
+    html += `<div class="section" id="station-${si}">`;
+    html += `<div class="section-header">
+      <div class="master-checkbox ${masterCls}" onclick="toggleAll(${si})">
+        <svg class="check-icon" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+        <svg class="dash-icon" viewBox="0 0 24 24"><line x1="6" y1="12" x2="18" y2="12"/></svg>
+      </div>
+      <h2>${st.name}</h2>
+      <span class="section-count ${p.done === p.total ? 'done' : ''}">${p.done}/${p.total}</span>
+    </div>`;
+    html += `<div class="section-body">`;
+    st.items.forEach((item, ii) => {
+      const key = `${si}-${ii}`;
+      const checked = state.checked[key];
+      html += `
+        <div class="check-item ${checked ? 'checked' : ''}" onclick="toggleCheck(${si},${ii})">
+          <div class="checkbox ${checked ? 'checked' : ''}">
+            <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <span class="check-label">${item}</span>
+        </div>`;
+    });
+    const noteVal = state.notes[si] || '';
+    html += `<div class="notes-area">
+      <label>Notes</label>
+      <textarea class="notes-input" data-station="${si}" placeholder="Add notes for ${st.name}…">${noteVal}</textarea>
+    </div>`;
+    html += `</div></div>`;
+  });
+
+  app.innerHTML = html;
+  updateProgress();
+  updateTabs();
+}
+
+function updateProgress() {
+  const done = totalChecked();
+  const total = totalItems();
+  const pct = total ? Math.round((done / total) * 100) : 0;
+  document.getElementById('progressPill').textContent = `${done} / ${total}`;
+  document.getElementById('progressFill').style.width = pct + '%';
+}
+
+function resetAll() {
+  if (!confirm('Reset all checkboxes and notes? This cannot be undone.')) return;
+  state = { checked: {}, notes: {}, date: new Date().toISOString().slice(0,10), supervisor: '' };
+  try { localStorage.removeItem(stateKey()); } catch(e) {}
+  render();
+  showToast('Checklist reset');
+}
+
+function exportPDF() {
+  state.date = document.getElementById('metaDate')?.value || '';
+  state.supervisor = document.getElementById('metaSupervisor')?.value || '';
+  document.querySelectorAll('.notes-input').forEach(el => {
+    state.notes[el.dataset.station] = el.value;
+  });
+
+  showToast('Generating PDF…');
+
+  // Load jsPDF dynamically
+  if (!window.jspdf) {
+    const script = document.createElement('script');
+    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+    script.onload = () => buildPDF();
+    script.onerror = () => showToast('Failed to load PDF library');
+    document.head.appendChild(script);
+  } else {
+    buildPDF();
+  }
+}
+
+function buildPDF() {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+
+  const pw = 210, ph = 297;
+  const ml = 16, mr = 16, mt = 16;
+  const cw = pw - ml - mr;
+  let y = 0;
+  let pageNum = 1;
+
+  // Colors
+  const bg = [15, 17, 23];
+  const surface = [26, 29, 39];
+  const border = [42, 46, 58];
+  const accent = [74, 222, 128];
+  const orange = [251, 146, 60];
+  const textCol = [232, 233, 237];
+  const dimCol = [139, 143, 163];
+  const darkText = [15, 17, 23];
+
+  function addPage() {
+    doc.addPage();
+    pageNum++;
+    drawPageBg();
+    y = mt;
+  }
+
+  function needSpace(h) {
+    if (y + h > ph - 20) addPage();
+  }
+
+  function drawPageBg() {
+    doc.setFillColor(...bg);
+    doc.rect(0, 0, pw, ph, 'F');
+  }
+
+  function roundedRect(x, yy, w, h, r, fillColor, strokeColor) {
+    if (fillColor) {
+      doc.setFillColor(...fillColor);
+      if (strokeColor) {
+        doc.setDrawColor(...strokeColor);
+        doc.setLineWidth(0.3);
+        doc.roundedRect(x, yy, w, h, r, r, 'FD');
+      } else {
+        doc.roundedRect(x, yy, w, h, r, r, 'F');
+      }
+    }
+  }
+
+  // ── Page 1 background ──
+  drawPageBg();
+  y = mt;
+
+  // ── Title bar ──
+  roundedRect(ml, y, cw, 18, 3, surface, border);
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(16);
+  doc.setTextColor(...accent);
+  doc.text('FDH', ml + 8, y + 11.5);
+  const fdhW = doc.getTextWidth('FDH');
+  doc.setTextColor(...textCol);
+  doc.text(' Closing Checklist', ml + 8 + fdhW, y + 11.5);
+
+  // Completion pill
+  const done = totalChecked();
+  const total = totalItems();
+  const pct = total ? Math.round((done / total) * 100) : 0;
+  const pillText = `${done}/${total} (${pct}%)`;
+  doc.setFontSize(9);
+  doc.setFont('helvetica', 'bold');
+  const pillW = doc.getTextWidth(pillText) + 10;
+  const pillX = ml + cw - pillW - 5;
+  const pillY = y + 5.5;
+  roundedRect(pillX, pillY, pillW, 7, 2, [accent[0], accent[1], accent[2], 0.15]);
+  doc.setTextColor(...accent);
+  doc.text(pillText, pillX + 5, pillY + 5);
+
+  y += 24;
+
+  // ── Meta info ──
+  roundedRect(ml, y, cw, 14, 3, surface, border);
+  doc.setFontSize(8);
+  doc.setFont('helvetica', 'bold');
+  doc.setTextColor(...dimCol);
+  doc.text('DATE', ml + 8, y + 5);
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(10);
+  doc.setTextColor(...textCol);
+  doc.text(state.date || '—', ml + 8, y + 10.5);
+
+  doc.setFontSize(8);
+  doc.setFont('helvetica', 'bold');
+  doc.setTextColor(...dimCol);
+  doc.text('SUPERVISOR ON DUTY', ml + cw / 2 + 5, y + 5);
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(10);
+  doc.setTextColor(...textCol);
+  doc.text(state.supervisor || '—', ml + cw / 2 + 5, y + 10.5);
+
+  y += 20;
+
+  // ── Stations ──
+  STATIONS.forEach((st, si) => {
+    const p = stationProgress(si);
+    const items = st.items;
+    const noteText = state.notes[si] || '';
+
+    // Estimate height needed for header
+    needSpace(16);
+
+    // Section header
+    roundedRect(ml, y, cw, 11, 2.5, surface, border);
+
+    // Master checkbox
+    const cbx = ml + 5, cby = y + 2.5, cbs = 6;
+    if (p.done === p.total) {
+      doc.setFillColor(...accent);
+      doc.roundedRect(cbx, cby, cbs, cbs, 1.2, 1.2, 'F');
+      // Checkmark
+      doc.setDrawColor(15, 17, 23);
+      doc.setLineWidth(0.6);
+      doc.line(cbx + 1.2, cby + 3.2, cbx + 2.5, cby + 4.6);
+      doc.line(cbx + 2.5, cby + 4.6, cbx + 4.8, cby + 1.8);
+    } else if (p.done > 0) {
+      doc.setFillColor(251, 146, 60, 0.2);
+      doc.setDrawColor(...orange);
+      doc.setLineWidth(0.3);
+      doc.roundedRect(cbx, cby, cbs, cbs, 1.2, 1.2, 'FD');
+      doc.setDrawColor(...orange);
+      doc.setLineWidth(0.5);
+      doc.line(cbx + 1.5, cby + 3, cbx + 4.5, cby + 3);
+    } else {
+      doc.setDrawColor(...border);
+      doc.setLineWidth(0.3);
+      doc.setFillColor(...[34, 38, 47]);
+      doc.roundedRect(cbx, cby, cbs, cbs, 1.2, 1.2, 'FD');
+    }
+
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(10.5);
+    doc.setTextColor(...textCol);
+    doc.text(st.name, ml + 14, y + 7.5);
+
+    // Count pill
+    const countText = `${p.done}/${p.total}`;
+    doc.setFontSize(8);
+    const countW = doc.getTextWidth(countText) + 6;
+    const countX = ml + cw - countW - 5;
+    if (p.done === p.total) {
+      roundedRect(countX, y + 2.5, countW, 6, 1.5, [20, 60, 30]);
+      doc.setTextColor(...accent);
+    } else {
+      roundedRect(countX, y + 2.5, countW, 6, 1.5, [34, 38, 47]);
+      doc.setTextColor(...dimCol);
+    }
+    doc.setFont('helvetica', 'bold');
+    doc.text(countText, countX + 3, y + 7);
+
+    y += 14;
+
+    // Items
+    items.forEach((item, ii) => {
+      const key = `${si}-${ii}`;
+      const checked = !!state.checked[key];
+
+      // Wrap text
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(9);
+      const lines = doc.splitTextToSize(item, cw - 22);
+      const lineH = 4;
+      const itemH = Math.max(lines.length * lineH + 3, 7);
+      needSpace(itemH + 1);
+
+      // Item checkbox
+      const icbx = ml + 7, icby = y + 0.5, icbs = 4.5;
+      if (checked) {
+        doc.setFillColor(...accent);
+        doc.roundedRect(icbx, icby, icbs, icbs, 1, 1, 'F');
+        doc.setDrawColor(...darkText);
+        doc.setLineWidth(0.45);
+        doc.line(icbx + 0.9, icby + 2.4, icbx + 1.8, icby + 3.4);
+        doc.line(icbx + 1.8, icby + 3.4, icbx + 3.6, icby + 1.3);
+      } else {
+        doc.setFillColor(34, 38, 47);
+        doc.setDrawColor(...border);
+        doc.setLineWidth(0.25);
+        doc.roundedRect(icbx, icby, icbs, icbs, 1, 1, 'FD');
+      }
+
+      // Text
+      if (checked) {
+        doc.setTextColor(139, 143, 163);
+      } else {
+        doc.setTextColor(...textCol);
+      }
+      doc.text(lines, ml + 15, y + 3.5);
+
+      // Strikethrough if checked
+      if (checked) {
+        lines.forEach((line, li) => {
+          const lw = doc.getTextWidth(line);
+          const ly = y + 3.5 + li * lineH - 1;
+          doc.setDrawColor(139, 143, 163);
+          doc.setLineWidth(0.2);
+          doc.line(ml + 15, ly, ml + 15 + lw, ly);
+        });
+      }
+
+      // Separator line
+      doc.setDrawColor(42, 46, 58, 0.5);
+      doc.setLineWidth(0.15);
+      y += itemH;
+      if (ii < items.length - 1) {
+        doc.line(ml + 6, y, ml + cw - 4, y);
+      }
+      y += 0.5;
+    });
+
+    // Notes
+    if (noteText.trim()) {
+      needSpace(14);
+      doc.setFontSize(7);
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(...dimCol);
+      doc.text('NOTES', ml + 7, y + 3);
+      y += 5;
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(8.5);
+      doc.setTextColor(...textCol);
+      const noteLines = doc.splitTextToSize(noteText, cw - 16);
+      roundedRect(ml + 5, y - 1, cw - 10, noteLines.length * 4 + 4, 2, [34, 38, 47], border);
+      doc.text(noteLines, ml + 9, y + 3);
+      y += noteLines.length * 4 + 6;
+    }
+
+    y += 6;
+  });
+
+  // ── Page numbers ──
+  const totalPages = doc.internal.getNumberOfPages();
+  for (let i = 1; i <= totalPages; i++) {
+    doc.setPage(i);
+    doc.setFontSize(7);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(...dimCol);
+    doc.text(`Page ${i} of ${totalPages}`, pw / 2, ph - 8, { align: 'center' });
+    doc.text('FDH Closing Checklist', ml, ph - 8);
+    doc.text(state.date || '', pw - mr, ph - 8, { align: 'right' });
+  }
+
+  const fileName = `closing-checklist-${state.date || 'export'}.pdf`;
+  const pdfBlob = doc.output('blob');
+  const pdfFile = new File([pdfBlob], fileName, { type: 'application/pdf' });
+
+  if (navigator.canShare && navigator.canShare({ files: [pdfFile] })) {
+    navigator.share({
+      files: [pdfFile],
+      title: 'FDH Closing Checklist',
+      text: `Closing checklist for ${state.date || 'today'}`
+    }).then(() => {
+      showToast('Shared successfully');
+    }).catch(err => {
+      if (err.name !== 'AbortError') {
+        showToast('Share cancelled');
+      }
+    });
+  } else {
+    // Fallback for browsers without share support
+    doc.save(fileName);
+    showToast('PDF downloaded');
+  }
+}
+
+// ── Init ──
+loadState();
+if (!state.date) state.date = new Date().toISOString().slice(0,10);
+render();
+
+// Update active tab on scroll
+let scrollTimeout;
+window.addEventListener('scroll', () => {
+  clearTimeout(scrollTimeout);
+  scrollTimeout = setTimeout(() => {
+    const sections = document.querySelectorAll('.section');
+    let closest = 0;
+    let closestDist = Infinity;
+    sections.forEach((el, i) => {
+      const rect = el.getBoundingClientRect();
+      const dist = Math.abs(rect.top - 180);
+      if (dist < closestDist) { closestDist = dist; closest = i; }
+    });
+    if (closest !== activeStation) {
+      activeStation = closest;
+      updateTabs();
+      // Scroll nav tab into view horizontally only
+      const nav = document.getElementById('stationNav');
+      const tab = document.querySelectorAll('.station-tab')[closest];
+      if (tab && nav) {
+        const navRect = nav.getBoundingClientRect();
+        const tabRect = tab.getBoundingClientRect();
+        const scrollLeft = tab.offsetLeft - nav.offsetLeft - (navRect.width / 2) + (tabRect.width / 2);
+        nav.scrollTo({ left: scrollLeft, behavior: 'smooth' });
+      }
+    }
+  }, 80);
+}, { passive: true });
+</script>
+</body>
+</html>
